@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Carousel</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+     <style>
+        /* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.carousel-container {
+    position: relative;
+    width: 80%;
+    max-width: 1200px;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 0 40px; /* Add padding to provide space for the arrows */
+}
+
+.carousel-wrapper {
+    overflow: hidden;
+    width: 100%;
+}
+
+.carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+    min-width: 20%; /* Display 5 items initially */
+    box-sizing: border-box;
+    padding: 20px;
+    text-align: center;
+}
+
+.carousel-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.product-name {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.product-price {
+    font-size: 20px;
+    color: #333;
+    margin: 10px 0;
+}
+
+.add-to-cart-btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ffa41c;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #e69500;
+}
+
+.prev-btn, .next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
+
+.prev-btn:hover, .next-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+     </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <button class="prev-btn" onclick="moveSlide(-1)">&#10094;</button>
+        <div class="carousel-wrapper">
+            <div class="carousel">
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 1</h2>
+                    <p class="product-price">$99.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 2</h2>
+                    <p class="product-price">$89.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <!-- Repeat carousel-item for up to 10 products -->
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 3</h2>
+                    <p class="product-price">$79.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 4</h2>
+                    <p class="product-price">$69.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 5</h2>
+                    <p class="product-price">$59.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 6</h2>
+                    <p class="product-price">$49.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 7</h2>
+                    <p class="product-price">$39.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 8</h2>
+                    <p class="product-price">$29.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 9</h2>
+                    <p class="product-price">$19.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/300" alt="Product Image">
+                    <h2 class="product-name">Product Name 10</h2>
+                    <p class="product-price">$9.99</p>
+                    <button class="add-to-cart-btn">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        <button class="next-btn" onclick="moveSlide(1)">&#10095;</button>
+    </div>
+
+    <script>
+        // script.js
+
+let currentSlide = 0;
+
+function moveSlide(direction) {
+    const carousel = document.querySelector('.carousel');
+    const totalItems = document.querySelectorAll('.carousel-item').length;
+    const visibleItems = 5; // Number of items to display at once
+
+    currentSlide += direction;
+
+    if (currentSlide < 0) {
+        currentSlide = totalItems - visibleItems;
+    } else if (currentSlide >= totalItems - visibleItems + 1) {
+        currentSlide = 0;
+    }
+
+    const newTransformValue = -currentSlide * (100 / visibleItems);
+    carousel.style.transform = `translateX(${newTransformValue}%)`;
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <title>Register</title>
+    <script>
+        document.addEventListener("DOMContentLoaded" , async => {
+        document.getElementById('regForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const response = await fetch('/register', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                const user = await response.json();
+                console.log(user);
+                localStorage.setItem('user_info', JSON.stringify(user));
+                localStorage.setItem('authToken', user.access_token);
+                // Optionally clear the form fields
+                event.target.reset();
+                localStorage.setItem('user', JSON.stringify(user));
+                window.location.href = '/login';
+            } else {
+                alert('Register failed. Please check your credentials.');
+            }
+        });
+    });
+    </script>
+</head>
+<body>
+
+
+    <div class="outer">
+        <h1>Register Here</h1>
+        <form action="/register" method="post" id="regForm">
+            
+            <div class="input-group">
+                <label for="name"><i class="fa-solid fa-user"></i></label>
+                <input type="text" id="name" name="name" placeholder="Name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email"><i class="fa-regular fa-envelope"></i></label>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="pwd"><i class="fa-solid fa-lock"></i>
+                </label>
+                <input type="password" id="pwd" name="password" placeholder="Password" minlength="8" maxlength="12">
+            </div>
+            <button type="submit">Register</button>
+        </form>
+
+        <div>
+            Already have an Account?
+            <a href="/login">Login here</a>
+        </div>
+
+    </div>
+    
+</body>
+</html>

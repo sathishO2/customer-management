@@ -1,0 +1,163 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    overflow-y: auto; 
+    /* Prevent horizontal scrolling */
+}
+
+.navbar {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+.navbar-left, .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-right {
+    margin-right: 10px;
+}
+
+.fas {
+    font-size: 25px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 5px;
+    font-size: 16px;
+    border: none;
+    border-radius: 3px 0 0 3px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.search-button {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 0 3px 3px 0;
+}
+
+.search-button:hover {
+    background-color: #444;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.user-photo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background-color: #fff;
+}
+
+.user-name {
+    color: #fff;
+}
+
+.login-logout {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.container {
+    display: flex;
+    margin-top: 60px; /* Adjust based on the height of your navbar */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Sidebar styles */
+.sidebar {
+    background-color: #f4f4f4;
+    width: 250px;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 60px; /* Adjust based on the height of your navbar */
+    left: 0;
+    bottom: 0;
+    transform: translateX(-250px); /* Initially hidden */
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* When the sidebar is active */
+.sidebar.active {
+    transform: translateX(0);
+}
+
+.sidebar h2 {
+    text-align: center;
+    color: #333;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin: 15px 0;
+}
+
+.sidebar-menu a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+}
+
+.sidebar-menu a:hover {
+    color: #007BFF;
+}
+
+/* Main content area */
+main {
+    flex: 1;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    box-sizing: border-box;
+    margin-left: 0; 
+    /* Initially no margin */
+}
+
+/* When the sidebar is active */
+main.sidebar-active {
+    margin-left: 250px; 
+    /* Adjust based on the width of your sidebar */
+}
+
+.content {
+    padding: 20px;
+}

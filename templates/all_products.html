@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/static/css/all_products.css">
+
+    <script>
+        function addToCart(formId) {
+            const authToken = localStorage.getItem('authToken');
+            console.log(authToken,"*********************")
+            const form = document.getElementById(formId);
+            const formData = new FormData(form);
+
+            fetch('/cart_page/add_cart_item', {
+                method: 'POST',
+                body: formData,
+            //     headers: {
+            //     'Content-Type': 'application/json',
+            //     // 'Authorization': `Bearer ${authToken}`
+            // }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        const moveSlide = (direction, category) => {
+            const carousel = document.getElementById(`carousel-${category}`);
+            const totalItems = carousel.children.length;
+            const visibleItems = 5; // Number of items to display at once
+            let currentSlide = parseInt(carousel.getAttribute('data-slide')) || 0;
+
+            currentSlide += direction;
+
+            if (currentSlide < 0) {
+                currentSlide = totalItems - visibleItems;
+            } else if (currentSlide >= totalItems - visibleItems + 1) {
+                currentSlide = 0;
+            }
+
+            const newTransformValue = -currentSlide * (100 / visibleItems);
+            carousel.style.transform = `translateX(${newTransformValue}%)`;
+            carousel.setAttribute('data-slide', currentSlide);
+        }
+    </script>
+
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block title %}Checkout{% endblock %}
+
+    {% block content %}
+    <body>
+        <div class="all-products">
+            {% for category, products in context.items() %}
+            {% if products|length != 0 %}
+            <div class="category-section">
+                <h2>{{ category }}</h2>
+                <div class="carousel-container">
+                    <button class="prev-btn" onclick="moveSlide(-1, '{{ category }}')">&#10094;</button>
+                    <div class="carousel-wrapper">
+                        <div class="carousel" id="carousel-{{ category }}">
+                            {% for product in products %}
+                            <div class="carousel-item">
+                                <a href="/products_page/product_info?product_id={{product.id}}" class="no-link-style">
+                                    <img src="{{ product.cover }}" alt="{{ product.name }}">
+                                    <h2 class="product-name">{{ product.name }}</h2>
+                                    <p class="product-price">${{ product.price }}</p>
+                                </a>
+                                <!-- <a href=""><button class="add-to-cart-btn">Add to Cart</button></a> -->
+                                <form id="add-to-cart-form-{{ product.id }}">
+                                    <input type="hidden" name="cart_id" value="{{ cart.id }}">
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <button type="button" class="btn add-to-cart-btn" onclick="addToCart('add-to-cart-form-{{ product.id }}')">Add to Cart</button>
+                                </form>
+                                
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <button class="next-btn" onclick="moveSlide(1, '{{ category }}')">&#10095;</button>
+                </div>
+            </div>
+            {%endif%}
+            {% endfor %}
+        </div>
+</body>
+{% endblock %}
+</html>

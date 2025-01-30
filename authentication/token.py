@@ -1,0 +1,31 @@
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from schemas.schemas import TokenData
+
+
+SECRET_KEY = "2c2b9ce8f69a8108ce6e2d3b3ecfc715641df3645a188f83341bf6c48368c404"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    return encoded_jwt
+
+
+def verify_token(token:str,credentials_exception):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+        token_data = TokenData(email=email)
+    except JWTError as e:
+        print(e)
+        raise credentials_exception
+    
+    return token_data

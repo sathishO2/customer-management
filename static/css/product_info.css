@@ -1,0 +1,116 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.product-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    flex: 1;
+    position: relative;
+}
+
+.product-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.like-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: gray;
+    cursor: pointer;
+}
+
+.like-btn.liked {
+    color: red;
+}
+
+.product-details {
+    flex: 2;
+    padding: 20px;
+}
+
+.product-name {
+    font-size: 24px;
+    margin: 0 0 10px 0;
+}
+
+.product-brand {
+    font-size: 18px;
+    color: gray;
+    margin: 0 0 20px 0;
+}
+
+.product-description {
+    font-size: 16px;
+    margin: 0 0 20px 0;
+}
+
+.product-price {
+    font-size: 20px;
+    color: green;
+    margin: 0 0 20px 0;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-to-cart-btn {
+    background-color: #f0c14b;
+    color: #111;
+}
+
+.buy-now-btn {
+    background-color: #ffa41c;
+    color: #fff;
+}
+
+.product-rating {
+    display: flex;
+    gap: 5px;
+    font-size: 20px;
+    margin: 20px 0;
+}
+
+.star {
+    color: gold;
+}
+
+.customer-reviews {
+    margin-top: 30px;
+}
+
+.customer-reviews h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.customer-reviews p {
+    font-size: 16px;
+    margin: 10px 0;
+}

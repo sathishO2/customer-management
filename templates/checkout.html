@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/static/css/checkout.css">
+    <script>
+        async function submitCheckoutForm(event) {
+            event.preventDefault();
+            const form = document.getElementById('checkout-form');
+            const submitButton = document.querySelector('.place-order-btn');
+
+            // Disable the submit button to prevent multiple submissions
+            submitButton.disabled = true;
+            submitButton.textContent = 'Placing order...';
+
+            // Get item_ids from the data attribute
+            const itemIds = JSON.parse(form.dataset.itemIds);
+            const items = itemIds.map((id) => {
+                const quantityInput = document.getElementById(`quantity-${id}`);
+                if (!quantityInput) {
+                    console.error(`No quantity input found for product_id: ${id}`);
+                    return;
+                }
+                const quantity = quantityInput.value;
+                return {
+                    product_id: id,
+                    quantity: quantity
+                };
+            }).filter(item => item !== undefined);
+
+            console.log('Items:', items);
+
+            const data = {
+                name: form.name.value,
+                address: form.address.value,
+                city: form.city.value,
+                state: form.state.value,
+                country: form.country.value,
+                zip: form.zip.value,
+                phone: form.phone.value,
+                payment_method: form.payment_method.value,
+                items: items
+            };
+
+            console.log('Data:', data);
+
+            try {
+                const response = await fetch('/order_page/create_order_item', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.detail}`);
+                    submitButton.disabled = false;  // Re-enable the button in case of error
+                    submitButton.textContent = 'Place Your Order';
+                    return;
+                }
+
+                // Show the popup message
+                alert('Order placed, thank you!');
+                
+                const jsonResponse = await response.json();
+                window.location.href = jsonResponse.redirect_url;
+            } catch (error) {
+                alert('An error occurred: ' + error.message);
+                submitButton.disabled = false;  // Re-enable the button in case of error
+                submitButton.textContent = 'Place Your Order';
+            }
+        }
+    </script>
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block title %}Checkout{% endblock %}
+
+    {% block content %}
+    
+    <div class="checkout-container">
+        <h1>Checkout</h1>
+        <form id="checkout-form" data-item-ids='{{ product_ids | tojson }}' onsubmit="submitCheckoutForm(event)">
+            <div class="checkout-section">
+                <h2>Delivery Address</h2>
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" value="{{ user_info.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <textarea id="address" name="address" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" value="" required>
+                </div>
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" value="" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country:</label>
+                    <input type="text" id="country" name="country" value="" required>
+                </div>
+                <div class="form-group">
+                    <label for="zip">ZIP Code:</label>
+                    <input type="text" id="zip" name="zip" value="" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="text" id="phone" name="phone" value="" required>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <h2>Payment Method</h2>
+                <div class="form-group">
+                    <input type="radio" id="credit-card" name="payment_method" value="credit_card" checked>
+                    <label for="credit-card">Credit Card</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="debit-card" name="payment_method" value="debit_card">
+                    <label for="debit-card">Debit Card</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" id="paypal" name="payment_method" value="paypal">
+                    <label for="paypal">PayPal</label>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <h2>Review Items and Delivery</h2>
+
+                {% for item in context %} 
+                    <div class="cart-item">
+                        <img src="{{ item.product_info.cover }}" alt="Product Image">
+                        <div class="item-details">
+                            <span class="item-name">{{ item.product_info.name }}</span>
+                            <span class="item-quantity">Quantity: {{ item.quantity }}</span>
+                            <span class="item-price">$ {{ item.product_total }}</span>
+                            <input type="hidden" id="quantity-{{ item.product_id }}" value="{{ item.quantity }}">
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="checkout-section total">
+                    <h2>Order Total</h2>
+                    <div class="order-total">
+                        <span>Total Item: {{ context | sum(attribute='quantity') }}</span>
+                        <span>Total Price: $ {{ context | sum(attribute='product_total') }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="place-order-btn">Place Your Order</button>
+        </form>
+    </div>
+    {% endblock %}
+</body>
+</html>

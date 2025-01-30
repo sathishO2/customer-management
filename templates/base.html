@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}My Website{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/static/css/base.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <button id="sidebarToggle" class="sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div class="navbar-right">
+        <form class="search-form">
+          <input type="text" class="search-input" placeholder="Search..." />
+          <button type="submit" class="search-button">
+            <i class="fas fa-search"></i>
+          </button>
+        </form>
+        <div class="user-profile">
+          <img
+            src="https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png"
+            alt="User Photo"
+            class="user-photo"
+          />
+
+          <span class="user-name" id="username"></span>
+        </div>
+
+        <a type="button" href="/logout" class="login-logout">Logout</a>
+
+      </div>
+    </nav>
+    <div class="container">
+      <aside class="sidebar" id="sidebar">
+        <h2>Dashboard</h2>
+        <ul class="sidebar-menu">
+          <li><a href="/categories_page/categorys">Categories</a></li>
+          <li><a href="/products_page/all_products">Products</a></li>
+          <li><a href="/cart_page/cart" id="cart-link">Cart</a></li>
+          <li>
+            <a href="/products_page/view_liked_products">Liked Products</a>
+          </li>
+          <li><a href="/order_page/read_orders">Orders</a></li>
+        </ul>
+      </aside>
+      <main>
+        {% block content %}
+        <!-- Page content goes here -->
+        {% endblock %}
+      </main>
+    </div>
+
+    <script> 
+
+      const parseJwt =  async (token) => {
+              try {
+                  const base64Url = token.split('.')[1];
+                  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                  }).join(''));
+  
+                  return JSON.parse(jsonPayload);
+              } catch (e) {
+                  console.error('Failed to parse JWT:', e);
+                  return null;
+              }
+          }
+  
+  
+        document.addEventListener("DOMContentLoaded", function () {
+          const token = localStorage.getItem("authToken");
+          console.log(token, "???");
+  
+          if (token) {
+            const decodedToken = parseJwt(token);
+            console.log(decodedToken ,'decodedToken');
+            document.getElementById("username").textContent = decodedToken.sub;
+          }
+  
+          const user_info = localStorage.getItem("user_info");
+          if (user_info) {
+            console.log("User ID: " + user_info); // Use user_id as needed
+            const user = JSON.parse(user_info);
+            document.querySelector(".user-name").innerHTML = user.user_name;
+            console.log(user);
+          }
+  
+          const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('main');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+
+            // Apply the saved sidebar state
+            if (localStorage.getItem('sidebarState') === 'active') {
+                sidebar.classList.add('active');
+                mainContent.classList.add('sidebar-active');
+            }
+
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                mainContent.classList.toggle('sidebar-active');
+
+                // Save the sidebar state
+                if (sidebar.classList.contains('active')) {
+                    localStorage.setItem('sidebarState', 'active');
+                } else {
+                    localStorage.setItem('sidebarState', '');
+                }
+            });
+
+            const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+            sidebarLinks.forEach(function(link) {
+                link.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                });
+            });
+        });
+      </script>
+    {% block script_extra %} {% endblock %}
+  </body>
+</html>

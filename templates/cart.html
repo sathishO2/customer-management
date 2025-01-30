@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="/static/css/cart.css">
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block title %}Shopping Cart{% endblock %}
+
+    {% block content %}
+    
+    {% if context %}
+    <h1>Shopping Cart</h1>
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in context %}
+                <tr data-item-id="{{ item.item_id }}">
+                    <td>
+                        <div class="product-info">
+                            <img src="{{ item.product_info.cover }}" alt="Product Image">
+                            <span>{{ item.product_info.name }}</span>
+                        </div>
+                    </td>
+                    <td class="product-price">{{ item.product_info.price }}</td>
+                    <td>
+                        <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1">
+                        <input type="hidden" name="cart_id" value="{{ item.cart_id }}">
+                        <input type="hidden" name="product_id" value="{{ item.product_info.id }}">
+                    </td>
+                    <td class="product-total">{{ item.product_total }}</td>
+                    <td>
+                       <form action="/cart_page/remove_cart_item" method="post">
+                        <input type="hidden" name="item_id" value="{{ item.item_id }}">
+                        <button type="submit" class="remove-btn">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="cart-summary">
+            <h3>Cart Summary</h3>
+            <p>Total Items: <span id="total-items">{{ context | sum(attribute='quantity') }}</span></p>
+            <p>Total Price: <span id="total-price">{{ context | sum(attribute='product_total') }}</span></p>
+            <a href="/cart_page/process_to_buy"><button class="checkout-btn">Checkout</button></a>
+        </div>
+    {% else %}
+        <h1>Cart is Empty</h1>
+    {% endif %}
+    {% endblock %}
+    {% block script_extra %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+            quantityInputs.forEach(input => {
+                input.addEventListener('change', updateCart);
+            });
+        });
+
+        function updateCart(event) {
+            const input = event.target;
+            const row = input.closest('tr');
+            const itemId = row.getAttribute('data-item-id');
+            const cartId = parseInt(row.querySelector('input[name="cart_id"]').value);
+            const productId = parseInt(row.querySelector('input[name="product_id"]').value);
+            const quantity = parseInt(input.value);
+            const price = parseFloat(row.querySelector('.product-price').innerText);
+            const total = price * quantity;
+
+            if (isNaN(productId)) {
+                console.error('Product ID is not a number');
+                return;
+            }
+
+            row.querySelector('.product-total').innerText = total.toFixed(2);
+
+            updateCartSummary();
+
+            const requestData = {
+                cart_item_id: parseInt(itemId),
+                cart_id: cartId,
+                product_id: productId,
+                quantity: quantity,
+                total: total.toFixed(2)
+            };
+
+            console.log("Sending data to server:", requestData);
+
+            fetch(`/cart_page/update_cart_item`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${JSON.stringify(errorData)}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.message) {
+                    console.log('Server response:', data);
+                } else {
+                    console.error('Unexpected server response:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function updateCartSummary() {
+            let totalItems = 0;
+            let totalPrice = 0.0;
+            
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const quantity = parseInt(row.querySelector('.quantity-input').value);
+                const total = parseFloat(row.querySelector('.product-total').innerText);
+                
+                totalItems += quantity;
+                totalPrice += total;
+            });
+
+            document.getElementById('total-items').innerText = totalItems;
+            document.getElementById('total-price').innerText = totalPrice.toFixed(2);
+        }
+    </script>
+    {% endblock %}
+</body>
+</html>

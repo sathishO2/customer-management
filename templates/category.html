@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Category</title>
+<link rel="stylesheet" href="/static/css/category.css">
+</head>
+<body>
+
+    {% extends "base.html" %}
+
+    {% block title %}Category List{% endblock %}
+
+    {% block content %}
+        <h1>Category List</h1>
+        <div class="outer">
+            {% for category in categories %}
+                <div class="category-card">
+                    <img src="{{ category.cover }}" alt="Category Image">
+                    <div class="card-content">
+                        <h4>{{ category.name }}</h4>
+                        <p>{{ category.description }}</p>
+                        <!-- <a href="/products_page/products" class="btn">View More</a> -->
+                        <a href="/products_page/products?category={{ category.id }}" class="btn">View More</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endblock %}
+
+    
+
+</body>
+</html>
+
+
+

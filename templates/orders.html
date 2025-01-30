@@ -1,0 +1,150 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders</title>
+<link rel="stylesheet" href="/static/css/orders.css">
+<script>
+    async function cancelOrder(orderId) {
+        try {
+            const response = await fetch('/order_page/cancel_order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ order_id: orderId })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert(data.message);
+                window.location.href = '/order_page/read_orders'; // Redirect after successful cancellation
+            } else {
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    errorData = { detail: "An error occurred" };
+                }
+                alert(`Failed to cancel order: ${errorData.detail}`);
+            }
+        } catch (error) {
+            alert("An unexpected error occurred");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const orderId = {{ context.order_id }};
+        document.querySelector('.cancel-item-button').addEventListener('click', () => {
+            cancelOrder(orderId);
+        });
+    });
+</script>
+
+</head>
+<body>
+
+    {% extends "base.html" %}
+
+    {% block title %}Order Details{% endblock %}
+
+    {% block content %}
+ 
+    <div class="order-details-container">
+        <h1>Order Details</h1>
+        <div class="order-info">
+            <div class="order-date">
+                <strong>Order Date:</strong> <span>{{context.order_date}}</span>
+            </div>
+            <div class="order-id">
+                <strong>Order ID:</strong> <span># {{context.order_id}}</span>
+            </div>
+            <div class="shipping-address">
+                <strong>Shipping Address:</strong>
+                <p>{{context.customer_name}},<br>
+                    {{context.address.address}},<br>
+                    {{context.address.city}} - 
+                    {{context.address.zip_code}},<br>
+                    {{context.address.state}},<br>
+                    {{context.address.country}}<br>
+                </p>
+            </div>
+            <div class="payment-method">
+                <strong>Payment Method:</strong> <span>{{context.payment_method.value}}</span>
+            </div>
+            <div class="payment-method">
+                <strong>Payment:</strong> <span>{{context.payment_status.value}}</span>
+            </div>
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-item">
+                    <span>Item Total:</span> <span>$ {{context.item_total}}</span>
+                </div>
+                <div class="summary-item">
+                    <span>Shipping Price:</span> <span>$ 10.00</span>
+                </div>
+                <div class="summary-item">
+                    <strong>Grand Total:</strong> <strong>$ {{context.item_total + 10}}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-info">
+            {% if context.order_status.value != 'Cancelled' and context.order_status.value != 'Delivered' %}
+                <div class="product-arriving-date">
+                    <strong>Arriving On {{context.arriving_on}}</strong>
+                </div>
+            {% elif context.order_status.value == 'Delivered' %}
+                <p><strong>Delivered at: {{context.delivered_at}}</strong>.</p>
+            {% endif %}
+            
+            <h2>Product Information</h2>
+            {% for product in context.products %}
+            <div class="product-item">
+                <img src="{{product.cover}}" alt="Product Image">
+                <div class="product-details">
+                    
+                    <div class="product-name">
+                        <strong>Product Name:</strong> <span>{{product.name}}</span>
+                    </div>
+                    <div class="product-price">
+                        <strong>Price:</strong> <span>$ {{product.price}}</span>
+                    </div>
+                    <div class="product-quantity">
+                        <strong>Quantity:</strong> <span>{{product.quantity}}</span>
+                    </div>
+                    <div class="product-description">
+                        <strong>Description:</strong> <span>{{product.detail}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        
+        <div class="order-actions">
+            <!-- <button class="track-package-button">Track Package</button> -->
+            <!-- {% if context.order_status.value != 'Cancelled' %}
+            <button class="cancel-item-button">Cancel Order</button>
+            {% elif context.order_status.value != 'Delivered' %}
+            <p>Your order has been <strong>Delivered</strong>.</p>
+            {% else %}
+            <p>Your order has been <strong>cancelled</strong>.</p>
+            {% endif %} -->
+
+            {% if context.order_status.value != 'Cancelled' and context.order_status.value != 'Delivered' %}
+                <button class="cancel-item-button">Cancel Order</button>
+            {% elif context.order_status.value == 'Delivered' %}
+                <p>Your order has been <strong>Delivered</strong>.</p>
+            {% else %}
+                <p>Your order has been <strong>cancelled</strong>.</p>
+            {% endif %}
+        </div>
+        
+    </div>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,131 @@
+
+    /* Include the updated CSS here */
+    /* Ensure all buttons have the same dimensions and style */
+.view-order-details-button,
+.buy-again-button,
+.product-review-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 150px;
+    height: 50px; /* Set a fixed height for all buttons */
+    display: inline-block; /* Ensure they all have the same box model */
+    text-align: center; /* Center text horizontally */
+    line-height: 30px; /* Center text vertically (adjust this value to center text perfectly) */
+}
+
+.view-order-details-button:hover,
+.product-review-button:hover {
+    background-color: #0056b3;
+}
+
+.buy-again-button {
+    background-color: #ffa41c;
+    color: #000;
+}
+
+.buy-again-button:hover {
+    background-color: darkgoldenrod;
+}
+
+/* Ensure the body and container styling remains the same */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+}
+
+.order-container {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.order-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.order-content {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.order-summary,
+.product-summary {
+    margin-bottom: 20px;
+}
+
+.order-summary {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.order-info,
+.delivery-info {
+    margin-bottom: 10px;
+}
+
+strong {
+    color: #333;
+}
+
+.product-summary {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ensure it takes full width */
+    margin-bottom: 15px;
+}
+
+.product-info img {
+    width: 100px; /* Fixed width */
+    height: 100px; /* Fixed height */
+    /* object-fit: cover; Maintain aspect ratio and cover the area */
+    object-fit: contain;
+    border-radius: 5px;
+    margin-right: 20px;
+}
+
+.product-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center vertically */
+    margin-left: 20px;
+}
+
+.product-details p {
+    margin: 5px 0;
+}
+
+.order-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}

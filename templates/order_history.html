@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Orders</title>
+<link rel="stylesheet" href="/static/css/order_history.css">
+<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+
+
+</head>
+<body>
+    {% extends "base.html" %}
+    {% block title %}Category List{% endblock %}
+    {% block content %}
+    <div class="order-container">
+        
+        {%if orders|length != 0%}
+        <h1>Your Orders</h1>
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-content">
+                <div class="order-summary">
+                    <div class="order-info">
+                        <strong>Order Placed:</strong> <span>{{ order.order_date }}</span>
+                    </div>
+                    <div class="order-info">
+                        <strong>Total:</strong> <span>$ {{ order.total_price }}</span>
+                    </div>
+                    <div class="order-info">
+                        <strong>Ship To:</strong> <span>{{ order.customer_name }}</span>
+                    </div>
+                    <div class="order-info">
+                        <strong>Order ID:</strong> <span># {{ order.order_id }}</span>
+                    </div>
+                    <div class="order-info">
+                        <strong>Status:</strong> <span>{{ order.status }}</span>
+                    </div>
+                </div>
+                <div class="product-summary">
+                    {% if order.status != 'cancelled'%}
+                    <div class="delivery-info">
+                        <strong>Delivered:</strong> <span>{{ order.delivery_at }}</span>
+                    </div>
+                    {%endif%}
+                    {% for item in order.items_info %}
+                    <div class="product-info">
+                        <img src="{{ item.cover }}" alt="Product Image">
+                        <div class="product-details">
+                            <p><strong>Product Name:</strong> {{ item.name }}</p>
+                            <p><strong>Details:</strong> {{ item.detail }}</p>
+                            <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="order-buttons">
+                <a href="/order_page/read_order_item?order_id={{order.order_id}}">
+                    <button class="view-order-details-button">View Order Details</button>
+                </a>
+                <a href="/order_page/buy_again?order_id={{order.order_id}}">
+                    <button class="buy-again-button">Buy Again</button>
+                </a>
+                {% if order.status != 'cancelled' and order.items_info|length == 1 %}
+                <a href="/reviews_page/review?product_id={{order.items_info[0].id}}"><button class="product-review-button">Product Review</button></a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {%else%}
+        <h1>Make new Orders</h1>
+        {%endif%}
+    </div>
+    {% endblock %}
+</body>
+</html>

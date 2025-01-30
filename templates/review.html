@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Review</title>
+    <link rel="stylesheet" href="/static/css/review.css">
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block title %}Create Review{% endblock %}
+
+    {% block content %}
+    <div class="review-container">
+        <div class="product-details">
+            <img src="{{ product.cover }}" alt="Product Image" class="product-image">
+            <div class="product-info">
+                <h1 class="product-name">{{ product.name }}</h1>
+                <p class="product-description">{{ product.description }}</p>
+            </div>
+        </div>
+
+        <form id="review-form" class="review-form">
+            <input type="hidden" id="product_id" name="product_id" value="{{ product.id }}">
+            <div class="rating-section">
+                <h2>Overall Rating</h2>
+                <div class="star-rating">
+                    <input type="radio" id="1-star" name="rating" value="1">
+                    <label for="1-star" class="star">&#9733;</label>
+                    <input type="radio" id="2-stars" name="rating" value="2">
+                    <label for="2-stars" class="star">&#9733;</label>
+                    <input type="radio" id="3-stars" name="rating" value="3">
+                    <label for="3-stars" class="star">&#9733;</label>
+                    <input type="radio" id="4-stars" name="rating" value="4">
+                    <label for="4-stars" class="star">&#9733;</label>
+                    <input type="radio" id="5-stars" name="rating" value="5">
+                    <label for="5-stars" class="star">&#9733;</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="headline">Headline</label>
+                <input type="text" id="headline" name="headline" required>
+            </div>
+
+            <div class="form-group">
+                <label for="review">Written Review</label>
+                <textarea id="review" name="review" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Review</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('review-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Collect form data
+            const formData = new FormData(this);
+            const rating = formData.get('rating');
+            const headline = formData.get('headline');
+            const review = formData.get('review');
+            const productId = formData.get('product_id');
+            const userId = formData.get('user_id');
+            
+            // Prepare the data object
+            const reviewData = {
+                user_id: 1,
+                product_id: parseInt(productId),
+                rating: parseInt(rating),
+                headline: headline,
+                command: review
+            };
+
+            try {
+                const response = await fetch('/reviews_page/write_review', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reviewData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.detail}`);
+                    return;
+                }
+
+                alert('Review submitted successfully!');
+                // Optionally, you can redirect the user or clear the form
+                // window.location.href = '/somewhere'; // Redirect
+                // this.reset(); // Clear form
+            } catch (error) {
+                alert('An error occurred: ' + error.message);
+            }
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>
